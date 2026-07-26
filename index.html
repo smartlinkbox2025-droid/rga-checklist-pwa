@@ -2,153 +2,16 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0f3d56" />
-  <meta name="description" content="تطبيق احترافي لقوائم الفحص الميدانية يعمل دون اتصال" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="icon" href="icons/icon-192.svg" />
-  <link rel="apple-touch-icon" href="icons/icon-192.svg" />
-  <link rel="stylesheet" href="assets/styles.css" />
-  <title>منصة قوائم الفحص</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1e3a8a" />
+  <meta name="description" content="نظام عربي خاص لإدارة مالية العائلة ورواتب أفرادها" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <title>مالية العائلة</title>
 </head>
 <body>
-  <div id="toast" class="toast"></div>
-  <header class="topbar">
-    <button class="icon-btn" id="menuBtn" aria-label="القائمة">☰</button>
-    <div class="brand"><span class="brand-mark">✓</span><div><strong data-i18n="appName">منصة قوائم الفحص</strong><small data-i18n="appSub">فحص ميداني ذكي</small></div></div>
-    <div class="top-actions"><button id="installBtn" class="ghost hidden" data-i18n="install">تثبيت</button><button id="langBtn" class="ghost">EN</button></div>
-  </header>
-
-  <aside id="sidebar" class="sidebar">
-    <nav>
-      <button class="nav-link active" data-view="dashboard">📊 <span data-i18n="dashboard">لوحة التحكم</span></button>
-      <button class="nav-link" data-view="templates">📋 <span data-i18n="templates">قوائم الفحص</span></button>
-      <button class="nav-link" data-view="records">🗂️ <span data-i18n="records">سجل التقارير</span></button>
-      <button class="nav-link" data-view="enterprise">🏢 <span>Enterprise</span></button>
-      <button class="nav-link" data-view="settings">⚙️ <span data-i18n="settings">الإعدادات</span></button>
-    </nav>
-    <div class="offline-card"><span id="onlineDot" class="dot"></span><span id="onlineText">متصل</span></div>
-  </aside>
-
-  <main class="main">
-    <section id="dashboard" class="view active">
-      <div class="page-head"><div><h1 data-i18n="dashboard">لوحة التحكم</h1><p data-i18n="dashboardHint">نظرة شاملة على عمليات الفحص والنتائج.</p></div><button class="primary" data-open="templates">＋ <span data-i18n="newInspection">فحص جديد</span></button></div>
-      <div class="kpi-grid">
-        <article class="kpi"><span>📋</span><div><small data-i18n="totalInspections">إجمالي الفحوصات</small><strong id="kpiTotal">0</strong></div></article>
-        <article class="kpi"><span>✅</span><div><small data-i18n="avgScore">متوسط التقييم</small><strong id="kpiAvg">0%</strong></div></article>
-        <article class="kpi"><span>⚠️</span><div><small data-i18n="nonCompliant">غير المطابق</small><strong id="kpiFail">0</strong></div></article>
-        <article class="kpi"><span>🕒</span><div><small data-i18n="todayInspections">فحوصات اليوم</small><strong id="kpiToday">0</strong></div></article>
-      </div>
-      <div class="dashboard-grid">
-        <article class="panel"><div class="panel-head"><h2 data-i18n="performance">مؤشر الأداء</h2><span data-i18n="lastSix">آخر 6 تقارير</span></div><div id="chart" class="chart"></div></article>
-        <article class="panel"><div class="panel-head"><h2 data-i18n="categorySummary">ملخص القوائم</h2></div><div id="categorySummary" class="category-list"></div></article>
-      </div>
-      <article class="panel"><div class="panel-head"><h2 data-i18n="recent">أحدث التقارير</h2><button class="link-btn" data-open="records" data-i18n="viewAll">عرض الكل</button></div><div id="recentTable" class="table-wrap"></div></article>
-    </section>
-
-    <section id="templates" class="view">
-      <div class="page-head"><div><h1 data-i18n="templates">قوائم الفحص</h1><p data-i18n="chooseTemplate">اختر القائمة المناسبة وابدأ الفحص من الجوال أو الكمبيوتر.</p></div></div>
-      <div id="templateGrid" class="template-grid"></div>
-    </section>
-
-    <section id="inspection" class="view">
-      <div class="page-head sticky-head"><div><button class="back-link" data-open="templates">→ <span data-i18n="back">رجوع</span></button><h1 id="inspectionTitle"></h1><p id="inspectionSubtitle"></p></div><div class="score-pill"><span data-i18n="liveScore">النتيجة</span><strong id="liveScore">0%</strong></div></div>
-      <form id="inspectionForm">
-        <article class="panel"><h2 data-i18n="inspectionData">بيانات التقييم</h2><div id="metaFields" class="form-grid"></div></article>
-        <div id="sectionsContainer"></div>
-        <article class="panel enterprise-inspection"><h2>بيانات Enterprise</h2><div class="form-grid">
-<label><span>حالة التقرير</span><select id="approvalStatus"><option value="submitted">مقدم للمراجعة</option><option value="approved">معتمد</option><option value="rejected">مرفوض</option></select></label>
-<label><span>المفتش المسؤول</span><input id="assignedInspector" placeholder="اسم المفتش"></label>
-<label><span>الموعد المستهدف للإغلاق</span><input id="dueDate" type="date"></label></div>
-<div class="enterprise-tools"><button type="button" id="captureGps" class="secondary">📍 تسجيل الموقع GPS</button><span id="gpsStatus" class="muted">لم يتم تسجيل الموقع</span></div>
-<div class="signature-grid"><div><h3>توقيع المفتش</h3><canvas id="inspectorSignature" class="signature-pad" width="500" height="160"></canvas><button type="button" class="small-btn" data-clear-signature="inspectorSignature">مسح</button></div><div><h3>توقيع المقاول / الممثل</h3><canvas id="contractorSignature" class="signature-pad" width="500" height="160"></canvas><button type="button" class="small-btn" data-clear-signature="contractorSignature">مسح</button></div></div></article>
-        <article class="panel"><h2 data-i18n="generalNotes">ملاحظات عامة</h2><textarea id="generalNotes" rows="4" data-i18n-placeholder="generalNotesPlaceholder" placeholder="اكتب الملاحظات أو التوصيات..."></textarea></article>
-        <div class="form-actions"><button type="button" id="saveDraftBtn" class="secondary" data-i18n="saveDraft">حفظ مسودة</button><button type="submit" class="primary" data-i18n="finishSave">إنهاء وحفظ التقرير</button></div>
-      </form>
-    </section>
-
-    <section id="records" class="view">
-      <div class="page-head"><div><h1 data-i18n="records">سجل التقارير</h1><p data-i18n="recordsHint">استعراض وطباعة وتصدير جميع الفحوصات المحفوظة على هذا الجهاز.</p></div><div class="head-actions"><button id="exportAllExcel" class="secondary">Excel</button><button id="clearRecords" class="danger" data-i18n="clearAll">حذف الكل</button></div></div>
-      <div class="filters"><input id="searchRecords" type="search" data-i18n-placeholder="search" placeholder="بحث..."><select id="filterType"><option value="" data-i18n="allTypes">كل الأنواع</option></select></div>
-      <div id="recordsTable" class="table-wrap panel"></div>
-    </section>
-
-    <section id="report" class="view"><div id="reportContent"></div></section>
-
-    <section id="enterprise" class="view">
-      <div class="page-head"><div><h1>لوحة Enterprise</h1><p>إدارة المستخدمين المحليين، سير الاعتماد، وسجل التدقيق.</p></div><button id="exportAudit" class="secondary">تصدير سجل التدقيق</button></div>
-      <div class="kpi-grid"><article class="kpi"><span>👤</span><div><small>المستخدمون</small><strong id="kpiUsers">0</strong></div></article><article class="kpi"><span>📝</span><div><small>بانتظار الاعتماد</small><strong id="kpiPending">0</strong></div></article><article class="kpi"><span>✅</span><div><small>المعتمد</small><strong id="kpiApproved">0</strong></div></article><article class="kpi"><span>📍</span><div><small>تقارير بموقع</small><strong id="kpiGps">0</strong></div></article></div>
-      <div class="dashboard-grid"><article class="panel"><h2>المستخدم الحالي والصلاحيات المحلية</h2><div class="form-grid"><label><span>المستخدم الحالي</span><select id="activeUser"></select></label><label><span>اسم مستخدم جديد</span><input id="newUserName"></label><label><span>الدور</span><select id="newUserRole"><option value="admin">مدير</option><option value="supervisor">مشرف</option><option value="inspector">مفتش</option><option value="viewer">مشاهد</option></select></label></div><button id="addUser" class="primary">إضافة مستخدم محلي</button><div id="usersList" class="enterprise-list"></div><p class="warning-note">تنبيه: هذه الصلاحيات محلية لتنظيم الاستخدام على الجهاز وليست نظام دخول مركزيًا آمنًا. الأمان المركزي يتطلب Backend.</p></article>
-      <article class="panel"><h2>سير الاعتماد</h2><div id="workflowSummary" class="enterprise-list"></div></article></div>
-      <article class="panel"><h2>سجل التدقيق</h2><div id="auditTable" class="table-wrap"></div></article>
-    </section>
-
-    <section id="settings" class="view">
-      <div class="page-head"><div><h1 data-i18n="settings">الإعدادات</h1><p data-i18n="settingsHint">إعداد بيانات الجهة التي تظهر في التقارير.</p></div></div>
-      <div class="settings-grid">
-        <article class="panel settings-card">
-          <h2>بيانات الشركة / Company Profile</h2>
-          <div class="form-grid">
-            <label><span>اسم الشركة بالعربية</span><input id="orgName" value="مؤسسة هيمنة الاتحاد للمقاولات العامة"></label>
-            <label><span>Company name in English</span><input id="orgNameEn" value="Union Dominance Contracting Est."></label>
-            <label><span>بادئة رقم التقرير</span><input id="reportPrefix" value="CHK"></label>
-            <label><span>الهاتف</span><input id="orgPhone" placeholder="+966..."></label>
-            <label><span>البريد الإلكتروني</span><input id="orgEmail" type="email" placeholder="info@example.com"></label>
-            <label><span>الموقع الإلكتروني</span><input id="orgWebsite" placeholder="https://example.com"></label>
-            <label><span>السجل التجاري</span><input id="orgCr"></label>
-            <label><span>الرقم الضريبي</span><input id="orgVat"></label>
-          </div>
-          <label><span>العنوان</span><textarea id="orgAddress" rows="2"></textarea></label>
-          <div class="logo-box">
-            <div id="logoPreview" class="logo-preview">LOGO</div>
-            <div>
-              <label class="upload-btn">رفع شعار الشركة<input id="logoInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden></label>
-              <button id="removeLogo" type="button" class="danger">حذف الشعار</button>
-              <small>سيظهر الشعار تلقائياً في لوحة التحكم وجميع تقارير PDF والطباعة.</small>
-            </div>
-          </div>
-          <div class="form-grid">
-            <label><span>اللون الرئيسي</span><input id="accentColor" type="color" value="#0f3d56"></label>
-            <label><span>المظهر</span><select id="themeMode"><option value="light">فاتح</option><option value="dark">داكن</option></select></label>
-            <label><span>جودة ضغط الصور</span><select id="imageQuality"><option value="0.55">اقتصادية</option><option value="0.72" selected>متوازنة</option><option value="0.88">عالية</option></select></label>
-          </div>
-          <button id="saveSettings" class="primary">حفظ إعدادات الشركة</button>
-        </article>
-        <article class="panel settings-card">
-          <h2>منشئ قائمة فحص مخصصة</h2>
-          <p class="muted">أنشئ قائمة جديدة دون تعديل الكود. اكتب كل بند في سطر مستقل.</p>
-          <label><span>اسم القائمة بالعربية</span><input id="customNameAr" placeholder="مثال: فحص المستودع"></label>
-          <label><span>Checklist name in English</span><input id="customNameEn" placeholder="Warehouse Inspection"></label>
-          <label><span>اسم القسم بالعربية</span><input id="customSectionAr" value="القسم الرئيسي"></label>
-          <label><span>Section name in English</span><input id="customSectionEn" value="Main Section"></label>
-          <label><span>البنود بالعربية — بند لكل سطر</span><textarea id="customItemsAr" rows="7"></textarea></label>
-          <label><span>English items — one item per line</span><textarea id="customItemsEn" rows="7"></textarea></label>
-          <button id="createCustomTemplate" class="primary">إنشاء القائمة</button>
-          <div id="customTemplatesList" class="storage-info"></div>
-        </article>
-        <article class="panel settings-card"><h2>إعدادات Enterprise</h2><label><span>رابط التحقق الأساسي</span><input id="verificationBase" placeholder="https://username.github.io/repository/"></label><label><span>حد المطابقة</span><input id="passThreshold" type="number" min="0" max="100" value="85"></label><label><span>حد يحتاج تحسين</span><input id="warningThreshold" type="number" min="0" max="100" value="60"></label><label><span><input id="requireGps" type="checkbox"> إلزام تسجيل GPS قبل إكمال التقرير</span></label><label><span><input id="requireSignatures" type="checkbox"> إلزام التوقيعات قبل الإكمال</span></label><button id="saveEnterpriseSettings" class="primary">حفظ إعدادات Enterprise</button></article>
-        <article class="panel settings-card">
-          <h2>النسخ الاحتياطي والاستعادة</h2>
-          <p class="muted">النسخة الاحتياطية تشمل التقارير والصور والشعار والإعدادات والقوائم المخصصة.</p>
-          <div class="backup-actions">
-            <button id="exportBackup" class="primary">⬇ تصدير نسخة احتياطية كاملة</button>
-            <label class="upload-btn">⬆ اختيار ملف للاستيراد<input id="importBackupFile" type="file" accept="application/json,.json" hidden></label>
-            <select id="importMode"><option value="merge">دمج مع البيانات الحالية</option><option value="replace">استبدال جميع البيانات</option></select>
-            <button id="importBackup" class="secondary">استيراد النسخة</button>
-          </div>
-          <hr>
-          <h3>تصدير البيانات</h3>
-          <div class="backup-actions">
-            <button id="settingsExportExcel" class="secondary">تصدير جميع التقارير Excel</button>
-            <button id="exportSummaryPdf" class="secondary">طباعة ملخص التقارير PDF</button>
-          </div>
-          <div id="storageInfo" class="storage-info"></div>
-        </article>
-      </div>
-    </section>
-  </main>
-
-  <template id="reportActionsTemplate"><div class="report-actions no-print"><button class="back-link" data-open="records">→ <span data-i18n="backRecords">العودة للسجل</span></button><div><button id="reportExcel" class="secondary">Excel</button><button id="reportPdf" class="primary">PDF / Print</button></div></div></template>
-  <script src="assets/app.js"></script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>
